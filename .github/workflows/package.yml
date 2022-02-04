@@ -1,0 +1,150 @@
+name: Package CI
+
+
+on:
+  push:
+    paths:
+      - 'deps.edn'
+      - '.github/workflows/package.yml'
+      - 'src/core/**/*.clj'
+      - 'src/core/**/*.cljs'
+      - 'src/core/**/*.cljc'
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+
+env:
+  clojure-cli: "1.10.3.1075"
+  java-version: "17"
+  library: io.github.ajchemist/runner
+
+
+jobs:
+  test:
+    if: "!(contains(github.event.head_commit.message, 'ci skip') || contains(github.event.head_commit.message, 'skip ci'))"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        clojure: [ "1.10" ]
+    name: test @ CLJ = ${{ matrix.clojure }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Cache gitlibs
+        uses: actions/cache@v2
+        with:
+          path: ~/.gitlibs
+          key: ${{ runner.os }}-gitlibs-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-gitlibs-
+      - name: Setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.java-version }}
+      - name: Set up clojure-cli
+        uses: DeLaGuardo/setup-clojure@3.7
+        with:
+          cli: ${{ env.clojure-cli }}
+      - name: Test runner
+        run: clojure -X:provided:test:test-runner
+
+
+      - name: Job digest -> telegram
+        if: always()
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          clojure -X:provided:test:github-actions-helper telegram-job-digest
+
+
+  package:
+    needs: [ test ]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Cache local maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Cache gitlibs
+        uses: actions/cache@v2
+        with:
+          path: ~/.gitlibs
+          key: ${{ runner.os }}-gitlibs-${{ hashFiles('**/deps.edn') }}
+          restore-keys: |
+            ${{ runner.os }}-gitlibs-
+
+
+      # This reset settings.xml
+      - name: Setup java
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: ${{ env.java-version }}
+      - name: Preparation
+        run: |
+          cp .ci/settings.xml ~/.m2/settings.xml
+          mvn dependency:get -Dartifact=org.apache.maven.plugins:maven-deploy-plugin:2.8
+      - name: Set up clojure-cli
+        uses: DeLaGuardo/setup-clojure@3.7
+        with:
+          cli: ${{ env.clojure-cli }}
+
+
+      - name: Make package
+        run: |
+          clojure -T:provided:build jar :lib ${{ env.library }}
+
+
+      - name: Deploy
+        env:
+          CLOJARS_USERNAME: ${{ secrets.CLOJARS_USERNAME }}
+          CLOJARS_PASSWORD: ${{ secrets.CLOJARS_PASSWORD }}
+        run: mvn deploy:deploy-file -DpomFile="pom.xml" -Dfile="target/package.jar" -Dpackaging=jar -DrepositoryId="clojars" -Durl="https://clojars.org/repo"
+
+
+      - name: Push a commit using the built-in token
+        run: |
+          git config --local user.name $GITHUB_ACTOR
+          git config --local user.email $(git --no-pager show --format="<%ae>" -s HEAD)
+          git add -- pom.xml
+          git commit -m "$(clojure -X:build:maven-tool print-pom-version) [ci skip]"
+          git remote -v
+          git push
+
+
+      - name: Job digest -> telegram
+        if: always()
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+          JOB_CONTEXT: ${{ toJSON(job) }}
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: |
+          clojure -X:provided:test:github-actions-helper telegram-job-digest
+
+
+      - uses: 8398a7/action-slack@v3.5.0
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+        if: always() # Pick up events even if the job fails or is canceled.

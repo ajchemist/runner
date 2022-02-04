@@ -1,0 +1,27 @@
+.cpcache
+.clj-kondo/.cache
+.lsp/.cache
+.eastwood
+.nrepl*
+
+
+# output
+
+
+/classes
+/out
+/target
+/volumes
+
+
+# shadow-cljs
+
+
+.shadow-cljs
+
+
+# node
+
+
+node_modules
+yarn*

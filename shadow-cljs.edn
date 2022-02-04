@@ -1,0 +1,14 @@
+{:deps {:aliases [:test]}
+
+ :builds
+ {:example {:target        :browser
+            :output-dir    "target/public/js"
+            :asset-path    "/js"
+            :modules       {:example {:entries [runner.example.core]}}
+            :build-options {:manifest-name "manifest.json"}
+            :build-hooks   [(hooks/print-build-state) (hooks/spit-build-state)]}}}
+
+
+;; Local Variables:
+;; cider-preferred-build-tool: shadow-cljs
+;; End:
