@@ -2,6 +2,7 @@
  :paths ["src/core"]
  :deps
  {
+  io.github.ajchemist/user.ring {:mvn/version "2021.252.19860"}
   }
 
 
@@ -11,19 +12,19 @@
   {
    :extra-deps
    {
-    integrant/integrant   {:mvn/version "0.8.0"}
-    org.clojure/clojure   {:mvn/version "1.10.3"}
-    org.clojure/data.json {:mvn/version "2.4.0"}
-
-    hawk/hawk {:mvn/version "0.2.11"}
-
-    clj-http/clj-http {:mvn/version "3.12.3"}
-    cheshire/cheshire {:mvn/version "5.10.1"}
-
+    cheshire/cheshire                {:mvn/version "5.10.1"}
+    clj-http/clj-http                {:mvn/version "3.12.3"}
+    hawk/hawk                        {:mvn/version "0.2.11"}
+    integrant/integrant              {:mvn/version "0.8.0"}
     io.github.ajchemist/telegram.clj {:mvn/version "2021.252.12143"}
     io.github.ajchemist/user.ring    {:mvn/version "2021.252.19860"}
-
-    thheller/shadow-cljs {:mvn/version "2.16.12"}
+    metosin/reitit                   {:mvn/version "0.5.15"}
+    org.clojure/clojure              {:mvn/version "1.10.3"}
+    org.clojure/data.json            {:mvn/version "2.4.0"}
+    ring/ring-core                   {:mvn/version "1.9.4"}
+    ring/ring-jetty-adapter          {:mvn/version "1.9.4"}
+    rum/rum                          {:mvn/version "0.12.8"}
+    thheller/shadow-cljs             {:mvn/version "2.16.12"}
     }}
 
 
@@ -47,7 +48,7 @@
    {
     rum/rum                              {:mvn/version "0.12.8"}
     io.github.ajchemist/telegram.clj     {:mvn/version "2021.252.12143"}
-    io.github.ajchemist/github.clj.alpha {:mvn/version "2021.252.17497"}
+    io.github.ajchemist/github.clj.alpha {:mvn/version "2022.36.54982"}
     }
    :ns-default github.core.alpha.actions-helper.api}
 
