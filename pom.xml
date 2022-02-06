@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>io.github.ajchemist</groupId>
   <artifactId>runner</artifactId>
-  <version>2022.37.30101</version>
+  <version>2022.37.30248</version>
   <name>runner</name>
   <dependencies>
     <dependency>
