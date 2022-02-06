@@ -53,6 +53,19 @@
     :dev))
 
 
+(defn- elide-profile-code?
+  [coll]
+  (not
+    (contains? (set coll) *profile*)))
+
+
+(defmacro in-profiles
+  {:style/indent [1]}
+  [coll & body]
+  (when-not (elide-profile-code? coll)
+    `(do ~@body)))
+
+
 ;; * dynamic variables for init-time
 
 
