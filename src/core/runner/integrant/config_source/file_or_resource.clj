@@ -1,6 +1,5 @@
 (ns runner.integrant.config-source.file-or-resource
   (:require
-   [clojure.edn :as edn]
    [clojure.java.io :as jio]
    [runner.environment :as env]
    [runner.integrant :as runner.ig]
