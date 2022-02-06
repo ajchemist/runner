@@ -1,7 +1,13 @@
 (ns runner.util
   (:require
+   [clojure.java.io :as jio]
    [clojure.string :as str]
+   [clojure.stacktrace :as stacktrace]
    [clojure.edn :as edn]
+   [clojure.data.json :as json]
+   )
+  (:import
+   java.io.PushbackReader
    ))
 
 
@@ -21,6 +27,14 @@
     s))
 
 
+(defn slash-absolutize
+  "Return absoulute path(slashed)."
+  [s]
+  (if (str/starts-with? s "/")
+    s
+    (str "/" s)))
+
+
 (defn slurp-edn-map
   "Read a readable source, slurp it, and read it as a map.
 
@@ -34,3 +48,25 @@
        (throw
          (let [path (str source)]
            (ex-info (format "Expected edn map in: %s" path) {:path path})))))))
+
+
+(defn read-edn-file
+  "Return nil if errors occur"
+  [edn-file]
+  (try
+    (with-open [rdr (jio/reader (jio/as-file edn-file))]
+      (edn/read (PushbackReader. rdr)))
+    (catch Exception e
+      (stacktrace/print-stack-trace e)
+      nil)))
+
+
+(defn read-json-file
+  "Return nil if errors occur"
+  [json-file]
+  (try
+    (with-open [rdr (jio/reader (jio/as-file json-file))]
+      (json/read rdr))
+    (catch Exception e
+      (stacktrace/print-stack-trace e)
+      nil)))
