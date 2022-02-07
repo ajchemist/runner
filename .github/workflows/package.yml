@@ -6,6 +6,7 @@ on:
     paths:
       - 'deps.edn'
       - '.github/workflows/package.yml'
+      - 'build/**.clj'
       - 'src/core/**/*.clj'
       - 'src/core/**/*.cljs'
       - 'src/core/**/*.cljc'
