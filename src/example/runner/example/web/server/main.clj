@@ -1,10 +1,14 @@
-(ns runner.web.server.main
+(ns runner.example.web.server.main
   (:gen-class)
   (:require
    [clojure.string :as str]
    [clojure.java.io :as jio]
-   ;; [clojure.tools.cli :as cli]
-   ;; [integrant.core :as ig]
+   [clojure.tools.cli :as cli]
+   [integrant.core :as ig]
+   [user.ring.alpha.model.integrant :as ig.ring]
+   [runner.environment :as runner.env]
+   [runner.integrant :as runner.ig]
+   [runner.integrant.config-source.file-or-resource :as runner.ig.file-or-resource]
    )
   (:import
    java.io.File
@@ -84,3 +88,39 @@
               [:server-render/webpack-asset-manifest-file
                :server-render/body-script-modules-file])
         $))))
+
+
+;;
+
+
+(derive :example/http-server ::ig.ring/jetty-server)
+
+
+(defn system-map
+  [rules {:keys [profile system-config-edn-file-or-resource-path] :as cli-opts}]
+  {:post [(map? %)]}
+  (runner.ig/merge-system-maps
+    rules
+    (merge
+      (direnv cli-opts)
+      {:system/profile profile})
+    [(runner.ig.file-or-resource/config-source system-config-edn-file-or-resource-path)]))
+
+
+(defn -main
+  [& xs]
+  (try
+    (let [{{:keys [volume-dir] :as cli-opts} :options} (cli/parse-opts xs cli-options)]
+      (println "[runner.environment] profile:" runner.env/*profile*)
+      (prn cli-opts)
+      (runner.env/install-system-exit-signal-handler!)
+      (runner.ig/install-system-shutdown-hook!)
+      (binding [runner.env/*volume-directory* volume-dir]
+        (as-> (-> (system-map nil cli-opts)
+                (ig/prep)
+                (ig/init [:module/core]))
+          $
+          (reset! runner.env/*system $))))
+    (catch Throwable e
+      (.printStackTrace e)
+      (shutdown-agents))))

@@ -1,4 +1,4 @@
-{:deps {:aliases [:test]}
+{:deps {:aliases [:test :example]}
 
  :builds
  {:example {:target        :browser
