@@ -4,7 +4,7 @@
   <packaging>jar</packaging>
   <groupId>io.github.ajchemist</groupId>
   <artifactId>runner</artifactId>
-  <version>2022.39.7967</version>
+  <version>2022.39.12606</version>
   <name>runner</name>
   <dependencies>
     <dependency>
@@ -15,7 +15,7 @@
     <dependency>
       <groupId>io.github.ajchemist</groupId>
       <artifactId>user.ring</artifactId>
-      <version>2021.252.19860</version>
+      <version>2022.39.7172</version>
     </dependency>
   </dependencies>
   <build>
