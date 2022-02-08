@@ -4,9 +4,11 @@ name: Heroku CI
 on:
   push:
     paths:
-      - 'deps.edn'
       - '.github/workflows/heroku.yml'
+      - 'deps.edn'
+      - 'heroku.yml'
       - 'build/**.clj'
+      - 'src/docker/**'
       - 'src/core/**/*.clj'
       - 'src/core/**/*.cljs'
       - 'src/core/**/*.cljc'

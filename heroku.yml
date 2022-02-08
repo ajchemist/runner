@@ -1,3 +1,5 @@
 build:
   docker:
-    example: src/docker/Dockerfile.example
+    web: src/docker/Dockerfile.heroku_web
+run:
+  web: java -Denvironment.profile=heroku -jar server.jar
