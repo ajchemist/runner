@@ -1,0 +1,17 @@
+{:example/ring-handler {
+                        :system/volume-dir #ig/ref :system/volume-dir
+                        :system/web-dir    #ig/ref :system/web-dir
+                        :system/log-dir    #ig/ref :system/log-dir
+
+                        :web/file-public-root     #ig/ref :web/file-public-root
+                        :web/resource-public-root #ig/ref :web/resource-public-root
+
+                        :server-render/root-dir                    #ig/ref :server-render/root-dir
+                        :server-render/body-script-modules-file    #ig/ref :server-render/body-script-modules-file
+                        :server-render/webpack-asset-manifest-file #ig/ref :server-render/webpack-asset-manifest-file
+
+                        :html/root-uri "https://ajchemist-runner-web-example.herokuapp.com"
+                        }
+
+ :example/http-server {:handler #ig/ref :example/ring-handler
+                       :options {:host "0.0.0.0" :port 5000 :join? false}}}

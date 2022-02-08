@@ -1,4 +1,4 @@
-(ns build.server
+(ns build.example.server
   (:refer-clojure :exclude [compile])
   (:require
    [clojure.string :as str]
@@ -6,7 +6,7 @@
    ))
 
 
-(def basis (build/create-basis {:project "deps.edn"}))
+(def basis (build/create-basis {:project "deps.edn" :aliases [:provided :example]}))
 (def class-dir "target/classes")
 (def uber-file "target/server.jar")
 
@@ -19,7 +19,7 @@
 (defn prep
   [_]
   (build/copy-dir
-    {:src-dirs   ["src/core"]
+    {:src-dirs   ["src/core" "src/example"]
      :target-dir class-dir
      :ignores    #{#".*\.clj[cs]?"}}))
 

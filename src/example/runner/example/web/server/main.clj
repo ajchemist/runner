@@ -5,14 +5,25 @@
    [clojure.java.io :as jio]
    [clojure.tools.cli :as cli]
    [integrant.core :as ig]
-   [user.ring.alpha.model.integrant :as ig.ring]
    [runner.environment :as runner.env]
    [runner.integrant :as runner.ig]
    [runner.integrant.config-source.file-or-resource :as runner.ig.file-or-resource]
+   [reitit.ring]
+   [runner.example.web.server.integrant]
    )
   (:import
    java.io.File
    ))
+
+
+;;
+
+
+(defmethod ig/init-key :default [_ o] o)
+(defmethod ig/halt-key! :default [_ _])
+
+
+;;
 
 
 (defn- resolve-path
@@ -93,18 +104,15 @@
 ;;
 
 
-(derive :example/http-server ::ig.ring/jetty-server)
-
-
 (defn system-map
-  [rules {:keys [profile system-config-edn-file-or-resource-path] :as cli-opts}]
+  [rules {:keys [profile system-config-edn-path] :as cli-opts}]
   {:post [(map? %)]}
   (runner.ig/merge-system-maps
     rules
     (merge
       (direnv cli-opts)
       {:system/profile profile})
-    [(runner.ig.file-or-resource/config-source system-config-edn-file-or-resource-path)]))
+    [(runner.ig.file-or-resource/config-source system-config-edn-path)]))
 
 
 (defn -main
@@ -118,7 +126,7 @@
       (binding [runner.env/*volume-directory* volume-dir]
         (as-> (-> (system-map nil cli-opts)
                 (ig/prep)
-                (ig/init [:module/core]))
+                (ig/init))
           $
           (reset! runner.env/*system $))))
     (catch Throwable e
