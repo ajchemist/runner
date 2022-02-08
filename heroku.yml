@@ -1,0 +1,3 @@
+build:
+  docker:
+    example: src/docker/Dockerfile.example

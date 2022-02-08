@@ -1,0 +1,12 @@
+FROM azul/zulu-openjdk-alpine:17-jre-headless
+
+
+LABEL maintainer "magneto.core <magneto.core@protonmail.com>"
+
+
+RUN mkdir -p /app
+COPY server.jar /app/server.jar
+WORKDIR /app
+
+
+CMD ["java", "-Denvironment.profile=heroku", "-jar", "server.jar"]
