@@ -110,7 +110,7 @@ jobs:
 
       - name: Make package
         run: |
-          clojure -T:provided:build jar :lib ${{ env.library }}
+          clojure -T:build jar :lib ${{ env.library }}
 
 
       - name: Deploy
