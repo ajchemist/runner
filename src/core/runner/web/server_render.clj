@@ -44,7 +44,7 @@
      request
      (get-in request [::reitit/match :path])))
   ([{:keys [::reitit/match]} path]
-   (file-or-resource
+   (util/file-or-resource
      (get-in match [:data :server-render/root-dir])
      path)))
 

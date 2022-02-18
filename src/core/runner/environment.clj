@@ -79,7 +79,8 @@
 (def ^:dynamic *volume-directory*
   (or
     (System/getProperty "environment.volume.directory")
-    (System/getenv "ENVIRONMENT_VOLUME_DIRECTORY")))
+    (System/getenv "ENVIRONMENT_VOLUME_DIRECTORY")
+    "volume"))
 
 
 (defn file-or-resource
