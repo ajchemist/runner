@@ -78,6 +78,20 @@
 ;; ** ring-middleware
 
 
+(defn wrap-webpack-asset-scripts
+  [handler entries]
+  (wrap-html-request
+    handler
+    :html/scripts
+    (fnil into [])
+    (fn [{:keys [::reitit/match]}]
+      (into []
+        (comp
+          (map (fn [asset-name] (find-webpack-asset-path match asset-name)))
+          (map (fn [path] [:script {:src path}])))
+        entries))))
+
+
 (defn wrap-webpack-asset-stylesheets
   [handler entries]
   (wrap-html-request
