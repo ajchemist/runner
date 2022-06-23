@@ -1,6 +1,7 @@
 (ns runner.integrant
   (:require
    [clojure.java.io :as jio]
+   [clojure.stacktrace :as stacktrace]
    [clojure.edn :as edn]
    [integrant.core :as ig]
    [runner.util :as util]
@@ -59,6 +60,9 @@
     config))
 
 
+;; * Init
+
+
 ;; * Shutdown
 
 
@@ -70,4 +74,12 @@
 
 (defn install-system-shutdown-hook!
   []
-  (.addShutdownHook (Runtime/getRuntime) (Thread. halt-system!)))
+  (.addShutdownHook
+    (Runtime/getRuntime)
+    (Thread.
+      (fn
+        []
+        (try
+          (halt-system!)
+          (catch Throwable e
+            (stacktrace/print-stack-trace e)))))))

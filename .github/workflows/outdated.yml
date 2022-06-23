@@ -17,7 +17,7 @@ on:
 
 
 env:
-  clojure-cli:
+  clojure-cli: "1.11.1.1149"
   java-version: "17"
   library: io.github.ajchemist/runner
 
@@ -48,20 +48,13 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: ${{ env.java-version }}
-      - name: GPG settings and ci resource configuration
-        env:
-          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
-        run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --import
-          mkdir -p $HOME/.m2
-          gpg --decrypt .ci/settings.xml.asc > $HOME/.m2/settings.xml
       - name: Set up clojure-cli
         uses: DeLaGuardo/setup-clojure@master
         with:
           cli: ${{ env.clojure-cli }}
       - name: Outdated
         run: |
-          clojure -M:slf4j-nop:outdated --skip=github-action --skip=pom --exclude=com.google.javascript/closure-compiler-unshaded
+          clojure -M:slf4j-nop:outdated --skip=github-action --skip=pom
       - name: Discord action job digest notification
         uses: sarisia/actions-status-discord@v1
         if: always() # Pick up events even if the job fails or is canceled.

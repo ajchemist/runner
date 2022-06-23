@@ -35,6 +35,20 @@
           :html/root-uri :html/reply-to :html/viewport :html/robots]))
 
 
+;; * IO
+
+
+(defn file-or-resource
+  ([request]
+   (file-or-resource
+     request
+     (get-in request [::reitit/match :path])))
+  ([{:keys [::reitit/match]} path]
+   (util/file-or-resource
+     (get-in match [:data :server-render/root-dir])
+     path)))
+
+
 ;; * Ring
 
 
@@ -62,6 +76,20 @@
 
 
 ;; ** ring-middleware
+
+
+(defn wrap-webpack-asset-scripts
+  [handler entries]
+  (wrap-html-request
+    handler
+    :html/scripts
+    (fnil into [])
+    (fn [{:keys [::reitit/match]}]
+      (into []
+        (comp
+          (map (fn [asset-name] (find-webpack-asset-path match asset-name)))
+          (map (fn [path] [:script {:src path}])))
+        entries))))
 
 
 (defn wrap-webpack-asset-stylesheets

@@ -70,3 +70,14 @@
     (catch Exception e
       (stacktrace/print-stack-trace e)
       nil)))
+
+
+(defn file-or-resource
+  [root-dir path]
+  (let [root (jio/as-file root-dir)]
+    (if (and root (.isDirectory root))
+      (let [file (jio/file root path)]
+        (cond
+          (.isFile file) file
+          :else          (jio/resource path)))
+      (jio/resource path))))

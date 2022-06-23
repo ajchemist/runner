@@ -8,6 +8,7 @@ on:
       - '.clj-kondo/config.edn'
       - 'src/core/**/*.clj'
       - 'src/core/**/*.cljc'
+      - 'src/core/**/*.cljs'
     branches:
       - master
   pull_request:
@@ -22,16 +23,9 @@ env:
 jobs:
   clj-kondo:
     name: Lint with clj-kondo
-    if: "!(contains(github.event.head_commit.message, 'ci skip') || contains(github.event.head_commit.message, 'skip ci'))"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # - uses: DeLaGuardo/clojure-lint-action@f712330e03eec4daa36da7045213190083aca4dd
-      #   with:
-      #     clj-kondo-args: --lint src # --config .clj-kondo/config.edn
-      #     # check-name is optional
-      #     check-name: This is a report name
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Setup clj-kondo
         uses: DeLaGuardo/setup-clj-kondo@master
         with:
@@ -40,11 +34,8 @@ jobs:
         run: |
           clj-kondo --lint src/core
           # --config .clj-kondo/config.edn
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took # selectable (default: repo,message)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # optional
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+      - name: Discord action job digest notification
         if: always() # Pick up events even if the job fails or is canceled.
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: sarisia/actions-status-discord@v1

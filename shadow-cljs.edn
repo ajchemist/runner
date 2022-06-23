@@ -1,12 +1,23 @@
-{:deps {:aliases [:test :example]}
+{:deps {:aliases [:provided :test :example]}
+
+
+ :dev-http {5000 {:handler runner.example.web.server.dev.shadow-cljs/ring-handler}}
+
 
  :builds
  {:example {:target        :browser
-            :output-dir    "target/public/js"
-            :asset-path    "/js"
+            :output-dir    "volumes/dev/web/public"
+            :asset-path    "/"
             :modules       {:example {:entries [runner.example.core]}}
             :build-options {:manifest-name "manifest.json"}
-            :build-hooks   [(hooks/print-build-state) (hooks/spit-build-state)]}}}
+            :build-hooks   [(hooks/print-build-state) (hooks/spit-build-state)]
+
+
+            :release       {:output-dir        "volume/web/public"
+                            :module-hash-names 8
+                            :closure-defines   {"goog.DEBUG" false
+                                                #_#_         "goog.debug.LOGGING_ENABLED" true}
+                            }}}}
 
 
 ;; Local Variables:

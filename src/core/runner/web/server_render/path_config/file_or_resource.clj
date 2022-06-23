@@ -5,29 +5,19 @@
    [reitit.core :as reitit]
    [user.ring.alpha :as user.ring]
    [runner.util :as util]
+   [runner.web.server-render :as server-render]
    ))
 
 
-(defn file-or-resource
-  [sr-root-dir path]
-  (let [sr-root (jio/as-file sr-root-dir)]
-    (if (and sr-root (.isDirectory sr-root))
-      (let [file (jio/file sr-root-dir path)]
-        (cond
-          (.isFile file) file
-          :else          (jio/resource path)))
-      (jio/resource path))))
-
-
 (defn- path-config-file-or-resource
-  [{::reitit/keys [match]}]
-  (let [{:keys [path]}   match
+  [{::reitit/keys [match] :as request}]
+  (let [path             (get-in request [::reitit/match :path])
         config-file-path (util/strip-left-slash path)
         config-file-path (if (str/ends-with? config-file-path "/")
                            (str config-file-path "index.edn")
                            (str config-file-path ".index.edn"))]
-    (file-or-resource
-      (get-in match [:data :server-render/root-dir])
+    (server-render/file-or-resource
+      request
       config-file-path)))
 
 

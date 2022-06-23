@@ -20,4 +20,8 @@
 
 
  :skip-comments true
+
+
+ :clojure-lsp/unused-public-var {:level   :warning
+                                 :exclude #{runner.web.server-render}}
  }

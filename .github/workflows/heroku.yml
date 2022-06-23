@@ -20,7 +20,7 @@ on:
 
 
 env:
-  clojure-cli: "1.10.3.1075"
+  clojure-cli: "1.11.1.1149"
   java-version: "17"
   library: io.github.ajchemist/runner
 
