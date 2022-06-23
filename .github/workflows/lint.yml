@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - '.github/workflows/lint.yml'
+      - '.clj-kondo/config.edn'
       - 'src/core/**/*.clj'
       - 'src/core/**/*.cljc'
     branches:
@@ -15,7 +16,7 @@ on:
 
 
 env:
-  java-version: '17'
+  clj-kondo-version: '2022.05.31'
 
 
 jobs:
@@ -34,7 +35,7 @@ jobs:
       - name: Setup clj-kondo
         uses: DeLaGuardo/setup-clj-kondo@master
         with:
-          version: '2022.01.15'
+          version: ${{ env.clj-kondo-version }}
       - name: Lint
         run: |
           clj-kondo --lint src/core
