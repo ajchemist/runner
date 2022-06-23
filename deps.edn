@@ -50,6 +50,10 @@
    :exec-args  ["src/test"]}
 
 
+  :outdated
+  {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
+   :main-opts  ["-m" "antq.core"]}
+
   :github-actions-helper
   {:replace-deps
    {
