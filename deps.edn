@@ -12,17 +12,17 @@
   {
    :extra-deps
    {
-    cheshire/cheshire                {:mvn/version "5.10.1"}
+    cheshire/cheshire                {:mvn/version "5.11.0"}
     clj-http/clj-http                {:mvn/version "3.12.3"}
     hawk/hawk                        {:mvn/version "0.2.11"}
     integrant/integrant              {:mvn/version "0.8.0"}
     io.github.ajchemist/telegram.clj {:mvn/version "2021.252.12143"}
-    metosin/reitit                   {:mvn/version "0.5.15"}
-    org.clojure/clojure              {:mvn/version "1.10.3"}
+    metosin/reitit                   {:mvn/version "0.5.18"}
+    org.clojure/clojure              {:mvn/version "1.11.1"}
     org.clojure/data.json            {:mvn/version "2.4.0"}
-    ring/ring-core                   {:mvn/version "1.9.4"}
-    ring/ring-jetty-adapter          {:mvn/version "1.9.4"}
-    rum/rum                          {:mvn/version "0.12.8"}
+    ring/ring-core                   {:mvn/version "1.9.5"}
+    ring/ring-jetty-adapter          {:mvn/version "1.9.5"}
+    rum/rum                          {:mvn/version "0.12.9"}
     thheller/shadow-cljs             {:mvn/version "2.16.12"}
     }}
 
@@ -54,10 +54,11 @@
   {:extra-deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}
    :main-opts  ["-m" "antq.core"]}
 
+
   :github-actions-helper
   {:replace-deps
    {
-    rum/rum                              {:mvn/version "0.12.8"}
+    rum/rum                              {:mvn/version "0.12.9"}
     io.github.ajchemist/telegram.clj     {:mvn/version "2021.252.12143"}
     io.github.ajchemist/github.clj.alpha {:mvn/version "2022.36.54982"}
     }
