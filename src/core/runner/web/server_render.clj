@@ -5,6 +5,7 @@
    [clojure.java.io :as jio]
    [reitit.core :as reitit]
    [rum.core :as rum]
+   [hawk.core :as hawk]
    [user.ring.alpha :as user.ring]
    [runner.util :as util]
    ))
@@ -49,6 +50,21 @@
      path)))
 
 
+(defn auto-update-reference
+  [file-path read-fn]
+  (let [initial   (read-fn file-path)
+        reference (atom (when (some? initial) initial))]
+    (alter-meta! reference merge
+      {:watch
+       (hawk/watch!
+         [{:paths   [(str (jio/as-file file-path))]
+           :handler (fn [_ctx {:keys [file]}]
+                      (when-some [new (read-fn file)]
+                        (reset! reference new)))}])})
+    (println "[hawk/watch!]:" file-path)
+    reference))
+
+
 ;; * Ring
 
 
@@ -70,9 +86,14 @@
   (util/read-json-file json-file))
 
 
+(defn webpack-asset-manifest-reference
+  [json-file]
+  (auto-update-reference json-file util/read-json-file))
+
+
 (defn find-webpack-asset-path
   [match asset-name]
-  (get-in match [:data :server-render/webpack-asset-manifest asset-name]))
+  (get @(get-in match [:data :server-render/webpack-asset-manifest]) asset-name))
 
 
 ;; ** ring-middleware
@@ -129,6 +150,16 @@
       nil)))
 
 
+(defn body-script-modules-reference
+  [edn-file]
+  (auto-update-reference edn-file util/read-edn-file))
+
+
+(defn find-body-script-modules
+  [match module-id]
+  (get @(get-in match [:data :server-render/body-script-modules]) module-id))
+
+
 ;; ** ring-middleware
 
 
@@ -139,7 +170,7 @@
     :html/body-scripts
     (fnil into [])
     (fn [{:keys [::reitit/match]}]
-      (get-in match [:data :server-render/body-script-modules module-id]))))
+      (find-body-script-modules match module-id))))
 
 
 ;; * html

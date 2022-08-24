@@ -4,6 +4,7 @@
  {
   io.github.ajchemist/user.ring {:mvn/version "2022.39.7172"}
   org.clojure/data.json         {:mvn/version "2.4.0"}
+  hawk/hawk                     {:mvn/version "0.2.11"}
   }
 
 
@@ -17,13 +18,13 @@
     clj-http/clj-http                {:mvn/version "3.12.3"}
     hawk/hawk                        {:mvn/version "0.2.11"}
     integrant/integrant              {:mvn/version "0.8.0"}
-    io.github.ajchemist/telegram.clj {:mvn/version "2021.252.12143"}
+    io.github.ajchemist/telegram.clj {:mvn/version "2022.68.16350"}
     metosin/reitit                   {:mvn/version "0.5.18"}
     org.clojure/clojure              {:mvn/version "1.11.1"}
     ring/ring-core                   {:mvn/version "1.9.5"}
     ring/ring-jetty-adapter          {:mvn/version "1.9.5"}
     rum/rum                          {:mvn/version "0.12.9"}
-    thheller/shadow-cljs             {:mvn/version "2.16.12"}
+    thheller/shadow-cljs             {:mvn/version "2.19.9"}
     }}
 
 
@@ -31,7 +32,7 @@
   {:extra-paths ["src/test"]
    :extra-deps
    {
-    thheller/shadow-cljs {:mvn/version "2.17.2"}
+    thheller/shadow-cljs {:mvn/version "2.19.9"}
     }}
 
 
@@ -44,10 +45,11 @@
 
 
   :test-runner
-  {:extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.5.0" :git/sha "b3fd0d2"}}
+  {:extra-deps {io.github.cognitect-labs/test-runner {:git/tag "v0.5.1" :git/sha "dfb30dd"}}
    :main-opts  ["-m" "cognitect.test-runner" "-d" "src/test"]
    :exec-fn    cognitect.test-runner.api/test
-   :exec-args  ["src/test"]}
+   :exec-args  {:dirs     ["src/test"]
+                :excludes [:deprecated]}}
 
 
   :outdated
@@ -55,19 +57,29 @@
    :main-opts  ["-m" "antq.core"]}
 
 
+  :slf4j-nop
+  {:extra-deps
+   {
+    org.slf4j/slf4j-nop {:mvn/version "1.7.36"}
+    }}
+
+
   :github-actions-helper
   {:replace-deps
    {
     rum/rum                              {:mvn/version "0.12.9"}
-    io.github.ajchemist/telegram.clj     {:mvn/version "2021.252.12143"}
+    io.github.ajchemist/telegram.clj     {:mvn/version "2022.68.16350"}
     io.github.ajchemist/github.clj.alpha {:mvn/version "2022.36.54982"}
     }
    :ns-default github.core.alpha.actions-helper.api}
 
 
   :build
-  {:deps       {io.github.clojure/tools.build {:git/tag "v0.7.5" :git/sha "34727f7"}
-                user.java.time/user.java.time {:mvn/version "2020.267.10158"}}
+  {:deps
+   {
+    io.github.clojure/tools.build      {:git/tag "v0.8.3" :git/sha "0d20256"}
+    io.github.ajchemist/user.java.time {:mvn/version "2022.75.23671"}
+    }
    :ns-default build.package}
 
 
@@ -77,7 +89,7 @@
 
 
   :shadow-cljs
-  {:extra-deps {thheller/shadow-cljs {:mvn/version "2.17.2"}}
+  {:extra-deps {thheller/shadow-cljs {:mvn/version "2.19.9"}}
    :main-opts  ["-m" "shadow.cljs.devtools.cli"]
    }
   }}
