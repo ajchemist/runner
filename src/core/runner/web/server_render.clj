@@ -55,12 +55,14 @@
   (let [initial   (read-fn file-path)
         reference (atom (when (some? initial) initial))]
     (alter-meta! reference merge
-      {:watch
+      {:hawk/watch
        (hawk/watch!
          [{:paths   [(str (jio/as-file file-path))]
            :handler (fn [_ctx {:keys [file]}]
                       (when-some [new (read-fn file)]
-                        (reset! reference new)))}])})
+                        (reset! reference new)
+                        (println "[hawk/watch!/update]:" (str file))))}])
+       :file-path file-path})
     (println "[hawk/watch!]:" file-path)
     reference))
 

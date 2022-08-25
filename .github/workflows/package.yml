@@ -10,6 +10,9 @@ on:
       - 'src/core/**/*.clj'
       - 'src/core/**/*.cljs'
       - 'src/core/**/*.cljc'
+      - 'src/test/**/*.clj'
+      - 'src/test/**/*.cljs'
+      - 'src/test/**/*.cljc'
     branches:
       - master
   pull_request:
