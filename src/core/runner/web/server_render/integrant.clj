@@ -8,8 +8,8 @@
 
 
 (defmethod ig/init-key ::auto-update-reference
-  [_ {:keys [file-path read-fn]}]
-  (server-render/auto-update-reference file-path read-fn))
+  [_ {:keys [file-path read-fn watch-opts]}]
+  (server-render/auto-update-reference file-path read-fn watch-opts))
 
 
 (defmethod ig/halt-key! ::auto-update-reference
